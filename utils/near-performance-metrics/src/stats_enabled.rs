@@ -20,7 +20,7 @@ use strum::AsStaticRef;
 
 const MEBIBYTE: usize = 1024 * 1024;
 const MEMORY_LIMIT: usize = 512 * MEBIBYTE;
-const MIN_MEM_USAGE_REPORT_SIZE: usize = 1 * MEBIBYTE;
+const MIN_MEM_USAGE_REPORT_SIZE: usize = 100 * MEBIBYTE;
 pub static NTHREADS: AtomicUsize = AtomicUsize::new(0);
 pub(crate) const SLOW_CALL_THRESHOLD: Duration = Duration::from_millis(500);
 const MIN_OCCUPANCY_RATIO_THRESHOLD: f64 = 0.02;
