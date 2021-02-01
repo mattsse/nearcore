@@ -108,7 +108,7 @@ impl ThreadStats {
         if ratio >= MIN_OCCUPANCY_RATIO_THRESHOLD || tmu >= MIN_MEM_USAGE_REPORT_SIZE {
             let class_name = format!("{:?}", self.classes);
             warn!(
-                "    Thread:{} ratio: {:.4} {}:{} memory: {}MiB",
+                "    Thread:{} ratio: {:.3} {}:{} memory: {}MiB",
                 tid,
                 ratio,
                 class_name,
@@ -190,8 +190,8 @@ impl Stats {
             ratio += cur_ratio;
             other_ratio += cur_other_ratio
         }
-        info!("    Other threads ratio {}", other_ratio);
-        info!("Total ratio = {}", ratio);
+        info!("    Other threads ratio {:.3}", other_ratio);
+        info!("Total ratio = {:.3}", ratio);
         // self.stats.clear();
     }
 }
