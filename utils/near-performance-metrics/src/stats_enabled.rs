@@ -100,7 +100,8 @@ impl ThreadStats {
     ) -> (f64, f64) {
         let mut ratio = self.time.as_nanos() as f64;
         if let Some(in_progress_since) = self.in_progress_since {
-            ratio += (now - max(in_progress_since, self.last_check)).as_nanos() as f64;
+            let from = max(in_progress_since, self.last_check);
+            ratio += (max(now, from) - from).as_nanos() as f64;
         }
         ratio /= sleep_time.as_nanos() as f64;
 

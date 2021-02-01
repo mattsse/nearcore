@@ -2,7 +2,7 @@ use log::warn;
 use std::time::Duration;
 use std::time::Instant;
 
-use crate::stats_enabled::{MyFuture, REF_COUNTER, SLOW_CALL_THRESHOLD, get_entry};
+use crate::stats_enabled::{get_entry, MyFuture, REF_COUNTER, SLOW_CALL_THRESHOLD};
 
 use near_rust_allocator_proxy::allocator::get_tid;
 
