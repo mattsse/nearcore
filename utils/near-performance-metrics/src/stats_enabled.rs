@@ -3,7 +3,7 @@ use futures::task::Context;
 use log::{info, warn};
 use near_rust_allocator_proxy::allocator::{
     current_thread_memory_usage, current_thread_peak_memory_usage, get_tid, reset_memory_usage_max,
-    thread_memory_usage,
+    thread_memory_count, thread_memory_usage,
 };
 use once_cell::sync::Lazy;
 use std::cell::RefCell;
@@ -109,12 +109,13 @@ impl ThreadStats {
         if ratio >= MIN_OCCUPANCY_RATIO_THRESHOLD || tmu >= MIN_MEM_USAGE_REPORT_SIZE {
             let class_name = format!("{:?}", self.classes);
             warn!(
-                "    Thread:{} ratio: {:.3} {}:{} memory: {}MiB",
+                "    Thread:{} ratio: {:.3} {}:{} memory: {}MiB({})",
                 tid,
                 ratio,
                 class_name,
                 get_tid(),
                 tmu / MEBIBYTE,
+                thread_memory_count(tid),
             );
             let mut stat: Vec<_> = self.stat.iter().collect();
             stat.sort_by(|x, y| (*x).0.cmp(&(*y).0));
