@@ -902,8 +902,7 @@ impl Graph {
     fn compute_result(&self, routes: &mut Vec<u128>) -> HashMap<PeerId, HashSet<PeerId>> {
         let source_id = 0;
         let mut result = HashMap::new();
-        for key in 0..routes.len() {
-            let cur_route = routes[key];
+        for (key, cur_route) in routes.iter().enumerate() {
             let mut peer_set: HashSet<PeerId> = HashSet::new();
             if let Some(neighbors) = self.adjacency.get(&source_id) {
                 for (id, neighbor) in neighbors.iter().enumerate().take(128) {
