@@ -576,8 +576,8 @@ impl PeerManagerActor {
                 duration,
                 |act, _ctx| {
                     act.routing_table.update();
-                    #[cfg(feature = "metric_recorder")]
-                    act.metric_recorder.set_graph(act.routing_table.get_raw_graph())
+                    //#[cfg(feature = "metric_recorder")]
+                    // act.metric_recorder.set_graph(act.routing_table.get_raw_graph())
                 },
             );
         }
