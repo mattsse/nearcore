@@ -97,7 +97,7 @@ impl ThreadStats {
         tid: usize,
         sleep_time: Duration,
         now: Instant,
-    ) -> (f64, f64) {
+    ) -> (f64, f64, usize, usize) {
         let mut ratio = self.time.as_nanos() as f64;
         if let Some(in_progress_since) = self.in_progress_since {
             let from = max(in_progress_since, self.last_check);
@@ -106,7 +106,9 @@ impl ThreadStats {
         ratio /= sleep_time.as_nanos() as f64;
 
         let tmu = thread_memory_usage(tid);
-        if ratio >= MIN_OCCUPANCY_RATIO_THRESHOLD || tmu >= MIN_MEM_USAGE_REPORT_SIZE {
+        let show_stats = ratio >= MIN_OCCUPANCY_RATIO_THRESHOLD || tmu >= MIN_MEM_USAGE_REPORT_SIZE;
+
+        if show_stats {
             let class_name = format!("{:?}", self.classes);
             warn!(
                 "    Thread:{} ratio: {:.3} {}:{} memory: {}MiB({})",
@@ -135,10 +137,10 @@ impl ThreadStats {
         self.last_check = now;
         self.clear();
 
-        if ratio > MIN_OCCUPANCY_RATIO_THRESHOLD {
-            return (ratio, 0.0);
+        if show_stats {
+            return (ratio, 0.0, 0, 0);
         } else {
-            return (ratio, ratio);
+            return (ratio, ratio, thread_memory_usage(tid), thread_memory_count(tid));
         }
     }
 
@@ -185,14 +187,23 @@ impl Stats {
 
         let mut ratio = 0.0;
         let mut other_ratio = 0.0;
+        let mut other_memory_size = 0;
+        let mut other_memory_count = 0;
         let now = Instant::now();
         for entry in s {
-            let (cur_ratio, cur_other_ratio) =
+            let (tmp_ratio, tmp_other_ratio, tmp_other_memory_size, tmp_other_memory_count) =
                 entry.1.lock().unwrap().print_stats_and_clear(*entry.0, sleep_time, now);
-            ratio += cur_ratio;
-            other_ratio += cur_other_ratio
+            ratio += tmp_ratio;
+            other_ratio += tmp_other_ratio;
+            other_memory_size += tmp_other_memory_size;
+            other_memory_count += tmp_other_memory_count;
         }
-        info!("    Other threads ratio {:.3}", other_ratio);
+        info!(
+            "    Other threads ratio {:.3} memory: {}MiB({})",
+            other_ratio,
+            other_memory_size / MEBIBYTE,
+            other_memory_count
+        );
         info!("Total ratio = {:.3}", ratio);
         // self.stats.clear();
     }
