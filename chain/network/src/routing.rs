@@ -871,18 +871,10 @@ impl Graph {
         distance[source_id] = 0;
 
         if let Some(neighbors) = self.adjacency.get(&source_id) {
-            let mut id = 0;
-            println!("X {} {}", id, neighbors.len());
-            for neighbor in neighbors {
-                if id >= 128 {
-                    break;
-                }
-
+            for (id, neighbor) in neighbors.iter().enumerate().take(128) {
                 queue.push_back(*neighbor);
                 distance[*neighbor] = 1;
                 routes[*neighbor] = (1 as u128) << id;
-
-                id += 1;
             }
         }
 
@@ -890,7 +882,6 @@ impl Graph {
             let cur_distance = distance[cur_peer];
 
             if let Some(neighbors) = self.adjacency.get(&cur_peer) {
-                println!("X {} {}", cur_peer, neighbors.len());
                 for neighbor in neighbors {
                     if distance[*neighbor] == -1 {
                         distance[*neighbor] = cur_distance + 1;
@@ -915,15 +906,10 @@ impl Graph {
             let cur_route = routes[key];
             let mut peer_set: HashSet<PeerId> = HashSet::new();
             if let Some(neighbors) = self.adjacency.get(&source_id) {
-                let mut id = 0;
-                for neighbor in neighbors {
-                    if id >= 128 {
-                        break;
-                    }
+                for (id, neighbor) in neighbors.iter().enumerate().take(128) {
                     if (cur_route & ((1 as u128) << id)) != 0 {
                         peer_set.insert(self.id2p.get(neighbor).unwrap().clone());
-                    }
-                    id += 1;
+                    };
                 }
             }
             result.insert(self.id2p.get(&key).unwrap().clone(), peer_set);
