@@ -138,9 +138,9 @@ impl ThreadStats {
         self.clear();
 
         if show_stats {
-            return (ratio, 0.0, 0, 0);
+            (ratio, 0.0, 0, 0)
         } else {
-            return (ratio, ratio, thread_memory_usage(tid), thread_memory_count(tid));
+            (ratio, ratio, thread_memory_usage(tid), thread_memory_count(tid))
         }
     }
 
@@ -205,7 +205,6 @@ impl Stats {
             other_memory_count
         );
         info!("Total ratio = {:.3}", ratio);
-        // self.stats.clear();
     }
 }
 
